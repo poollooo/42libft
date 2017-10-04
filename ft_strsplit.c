@@ -6,37 +6,74 @@
 /*   By: pnizet <pnizet@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/24 11:46:56 by pnizet            #+#    #+#             */
-/*   Updated: 2017/09/25 11:10:27 by pnizet           ###   ########.fr       */
+/*   Updated: 2017/10/04 16:25:50 by pnizet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	**ft_strsplit(char const *s, char c)
+static int	count_words(char const *s, char c)
 {
-	char	**tab;
-	char	*str;
-	size_t	nb_words;
-	size_t	num_word;
-	size_t	i;
+	int		i;
+	int		count;
 
-	nb_words = ft_compt_word(s, c);
-	num_word = 0;
 	i = 0;
-	tab = (char**)malloc(sizeof(char*) * (nb_words + 1));
-	while (num_word < nb_words)
+	count = 1;
+	if (s[i] == '\0')
+		return (0);
+	while (s[i])
 	{
-		i = 0;
-		str = (char*)malloc(sizeof(char) * (ft_lenght_word(str, c) + 1));
-		if (!str || !tab)
-			return (NULL);
-		while (s[0] == c && s[0])
-			s++;
-		while (s[0] != c && s[0])
-			str[i++] = *s++;
-		str[i] = '\0';
-		tab[num_word++] = str;
+		if (s[i] == c)
+		{
+			while (s[i] == c)
+			{
+				i++;
+			}
+			count++;
+		}
+		else
+		{
+			i++;
+		}
 	}
-	tab[num_word] = 0;
-	return (tab);
+	return (count);
+}
+
+static int	get_wordlen(char const *s, char c)
+{
+	int		len;
+
+	len = 0;
+	while (*s && *s++ != c)
+		len++;
+	return (len);
+}
+
+char		**ft_strsplit(char const *s, char c)
+{
+	int		i;
+	int		j;
+	int		len;
+	char	**split;
+
+	i = 0;
+	if (!s)
+		return (NULL);
+	split = (char **)malloc(sizeof(char *) * (count_words(s, c) + 1));
+	if (!split)
+		return (NULL);
+	while (*s)
+		if (*s != c)
+		{
+			j = 0;
+			len = get_wordlen(s, c);
+			split[i] = (char *)malloc(sizeof(char) * (len + 1));
+			while (len--)
+				split[i][j++] = *s++;
+			split[i++][j] = '\0';
+		}
+		else
+			s++;
+	split[i] = NULL;
+	return (split);
 }
